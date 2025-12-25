@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur d'Indemnités Kilométriques</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulateur d'Indemnités Kilométriques</h1>
+            <p class="subtitle">Calculez vos indemnités kilométriques selon le barème fiscal français</p>
+        </header>
+
+        <main>
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label for="vehicleType">Type de véhicule :</label>
+                    <select id="vehicleType" required>
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="voiture">Voiture</option>
+                        <option value="moto">Moto (plus de 50 cm³)</option>
+                        <option value="cyclomoteur">Cyclomoteur (50 cm³ ou moins)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="fiscalPowerGroup" style="display: none;">
+                    <label for="fiscalPower">Puissance fiscale (CV) :</label>
+                    <select id="fiscalPower">
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="3">3 CV et moins</option>
+                        <option value="4">4 CV</option>
+                        <option value="5">5 CV</option>
+                        <option value="6">6 CV</option>
+                        <option value="7">7 CV et plus</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="motoPowerGroup" style="display: none;">
+                    <label for="motoPower">Cylindrée :</label>
+                    <select id="motoPower">
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="1-2">1 ou 2 CV</option>
+                        <option value="3-5">3, 4 ou 5 CV</option>
+                        <option value="5+">Plus de 5 CV</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="distance">Distance parcourue (km) :</label>
+                    <input type="number" id="distance" min="1" step="1" required placeholder="Ex: 5000">
+                </div>
+
+                <button type="submit" class="btn-calculate">Calculer</button>
+            </form>
+
+            <div id="result" class="result" style="display: none;">
+                <h2>Résultat du calcul</h2>
+                <div class="result-details">
+                    <div class="result-item">
+                        <span class="label">Distance totale :</span>
+                        <span class="value" id="resultDistance"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Barème appliqué :</span>
+                        <span class="value" id="resultBareme"></span>
+                    </div>
+                    <div class="result-item total">
+                        <span class="label">Indemnité totale :</span>
+                        <span class="value" id="resultAmount"></span>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3>Détail du calcul</h3>
+                    <p id="calculDetail"></p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="info-box">
+                <h3>À propos du barème</h3>
+                <p>Ce simulateur utilise le barème fiscal français des indemnités kilométriques.
+                   Les montants sont calculés selon les formules officielles en vigueur.</p>
+                <p><strong>Note :</strong> Vérifiez toujours le barème en vigueur pour l'année fiscale concernée.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
