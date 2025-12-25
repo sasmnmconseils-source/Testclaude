@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Charges Sociales</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulateur de Charges Sociales</h1>
+            <p class="subtitle">Calculez vos charges sociales en France</p>
+        </header>
+
+        <main>
+            <div class="calculator-section">
+                <div class="input-group">
+                    <label for="salaireBrut">Salaire brut mensuel (€)</label>
+                    <input type="number" id="salaireBrut" placeholder="3000" min="0" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="statut">Statut</label>
+                    <select id="statut">
+                        <option value="cadre">Cadre</option>
+                        <option value="non-cadre">Non-cadre</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="type">Type d'emploi</label>
+                    <select id="type">
+                        <option value="prive">Secteur privé</option>
+                        <option value="public">Secteur public</option>
+                    </select>
+                </div>
+
+                <button id="calculer" class="btn-primary">Calculer</button>
+            </div>
+
+            <div id="results" class="results-section" style="display: none;">
+                <h2>Résultats</h2>
+
+                <div class="summary-cards">
+                    <div class="card">
+                        <h3>Salaire Brut</h3>
+                        <p class="amount" id="montantBrut">0 €</p>
+                    </div>
+                    <div class="card">
+                        <h3>Salaire Net</h3>
+                        <p class="amount highlight" id="montantNet">0 €</p>
+                    </div>
+                    <div class="card">
+                        <h3>Coût Total Employeur</h3>
+                        <p class="amount" id="coutTotal">0 €</p>
+                    </div>
+                </div>
+
+                <div class="details">
+                    <h3>Détail des Cotisations Salariales</h3>
+                    <table class="charges-table">
+                        <thead>
+                            <tr>
+                                <th>Type de cotisation</th>
+                                <th>Taux</th>
+                                <th>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cotisationsSalariales">
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td><strong>Total Cotisations Salariales</strong></td>
+                                <td></td>
+                                <td><strong id="totalSalarial">0 €</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <h3>Détail des Cotisations Patronales</h3>
+                    <table class="charges-table">
+                        <thead>
+                            <tr>
+                                <th>Type de cotisation</th>
+                                <th>Taux</th>
+                                <th>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cotisationsPatronales">
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td><strong>Total Cotisations Patronales</strong></td>
+                                <td></td>
+                                <td><strong id="totalPatronal">0 €</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="info-box">
+                    <h4>Information</h4>
+                    <p>Ces calculs sont donnés à titre indicatif et basés sur les taux moyens de charges sociales en France pour 2024. Les taux réels peuvent varier selon votre situation spécifique.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Simulateur de Charges Sociales - Outil d'estimation</p>
+        </footer>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>
