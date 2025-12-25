@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur d'Indemnités Kilométriques</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        main {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.05em;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .result-details {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item.total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #667eea;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .result-item .label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .result-item .value {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .result-item.total .value {
+            color: #667eea;
+            font-size: 1.4em;
+        }
+
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .info-box p {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        footer {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            main, footer {
+                padding: 20px;
+            }
+
+            .result {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulateur d'Indemnités Kilométriques</h1>
+            <p class="subtitle">Calculez vos indemnités kilométriques selon le barème fiscal français</p>
+        </header>
+
+        <main>
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label for="vehicleType">Type de véhicule :</label>
+                    <select id="vehicleType" required>
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="voiture">Voiture</option>
+                        <option value="moto">Moto (plus de 50 cm³)</option>
+                        <option value="cyclomoteur">Cyclomoteur (50 cm³ ou moins)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="fiscalPowerGroup" style="display: none;">
+                    <label for="fiscalPower">Puissance fiscale (CV) :</label>
+                    <select id="fiscalPower">
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="3">3 CV et moins</option>
+                        <option value="4">4 CV</option>
+                        <option value="5">5 CV</option>
+                        <option value="6">6 CV</option>
+                        <option value="7">7 CV et plus</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="motoPowerGroup" style="display: none;">
+                    <label for="motoPower">Cylindrée :</label>
+                    <select id="motoPower">
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="1-2">1 ou 2 CV</option>
+                        <option value="3-5">3, 4 ou 5 CV</option>
+                        <option value="5+">Plus de 5 CV</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="distance">Distance parcourue (km) :</label>
+                    <input type="number" id="distance" min="1" step="1" required placeholder="Ex: 5000">
+                </div>
+
+                <button type="submit" class="btn-calculate">Calculer</button>
+            </form>
+
+            <div id="result" class="result" style="display: none;">
+                <h2>Résultat du calcul</h2>
+                <div class="result-details">
+                    <div class="result-item">
+                        <span class="label">Distance totale :</span>
+                        <span class="value" id="resultDistance"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Barème appliqué :</span>
+                        <span class="value" id="resultBareme"></span>
+                    </div>
+                    <div class="result-item total">
+                        <span class="label">Indemnité totale :</span>
+                        <span class="value" id="resultAmount"></span>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3>Détail du calcul</h3>
+                    <p id="calculDetail"></p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="info-box">
+                <h3>À propos du barème</h3>
+                <p>Ce simulateur utilise le barème fiscal français des indemnités kilométriques.
+                   Les montants sont calculés selon les formules officielles en vigueur.</p>
+                <p><strong>Note :</strong> Vérifiez toujours le barème en vigueur pour l'année fiscale concernée.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Barème fiscal français des indemnités kilométriques (2024)
+        const BAREMES = {
+            voiture: {
+                3: {
+                    upTo5000: (d) => d * 0.529,
+                    from5001To20000: (d) => (5000 * 0.529) + ((d - 5000) * 0.316),
+                    above20000: (d) => (5000 * 0.529) + (15000 * 0.316) + ((d - 20000) * 0.370)
+                },
+                4: {
+                    upTo5000: (d) => d * 0.606,
+                    from5001To20000: (d) => (5000 * 0.606) + ((d - 5000) * 0.340),
+                    above20000: (d) => (5000 * 0.606) + (15000 * 0.340) + ((d - 20000) * 0.407)
+                },
+                5: {
+                    upTo5000: (d) => d * 0.636,
+                    from5001To20000: (d) => (5000 * 0.636) + ((d - 5000) * 0.357),
+                    above20000: (d) => (5000 * 0.636) + (15000 * 0.357) + ((d - 20000) * 0.427)
+                },
+                6: {
+                    upTo5000: (d) => d * 0.665,
+                    from5001To20000: (d) => (5000 * 0.665) + ((d - 5000) * 0.374),
+                    above20000: (d) => (5000 * 0.665) + (15000 * 0.374) + ((d - 20000) * 0.447)
+                },
+                7: {
+                    upTo5000: (d) => d * 0.697,
+                    from5001To20000: (d) => (5000 * 0.697) + ((d - 5000) * 0.394),
+                    above20000: (d) => (5000 * 0.697) + (15000 * 0.394) + ((d - 20000) * 0.470)
+                }
+            },
+            moto: {
+                '1-2': {
+                    upTo3000: (d) => d * 0.395,
+                    from3001To6000: (d) => (3000 * 0.395) + ((d - 3000) * 0.099),
+                    above6000: (d) => (3000 * 0.395) + (3000 * 0.099) + ((d - 6000) * 0.248)
+                },
+                '3-5': {
+                    upTo3000: (d) => d * 0.468,
+                    from3001To6000: (d) => (3000 * 0.468) + ((d - 3000) * 0.082),
+                    above6000: (d) => (3000 * 0.468) + (3000 * 0.082) + ((d - 6000) * 0.275)
+                },
+                '5+': {
+                    upTo3000: (d) => d * 0.606,
+                    from3001To6000: (d) => (3000 * 0.606) + ((d - 3000) * 0.075),
+                    above6000: (d) => (3000 * 0.606) + (3000 * 0.075) + ((d - 6000) * 0.343)
+                }
+            },
+            cyclomoteur: {
+                default: {
+                    upTo3000: (d) => d * 0.315,
+                    from3001To6000: (d) => (3000 * 0.315) + ((d - 3000) * 0.079),
+                    above6000: (d) => (3000 * 0.315) + (3000 * 0.079) + ((d - 6000) * 0.198)
+                }
+            }
+        };
+
+        // Éléments du DOM
+        const vehicleTypeSelect = document.getElementById('vehicleType');
+        const fiscalPowerGroup = document.getElementById('fiscalPowerGroup');
+        const fiscalPowerSelect = document.getElementById('fiscalPower');
+        const motoPowerGroup = document.getElementById('motoPowerGroup');
+        const motoPowerSelect = document.getElementById('motoPower');
+        const distanceInput = document.getElementById('distance');
+        const calculatorForm = document.getElementById('calculatorForm');
+        const resultDiv = document.getElementById('result');
+
+        // Gestion du changement de type de véhicule
+        vehicleTypeSelect.addEventListener('change', function() {
+            const vehicleType = this.value;
+
+            // Réinitialiser les sélections
+            fiscalPowerSelect.value = '';
+            motoPowerSelect.value = '';
+
+            // Afficher/masquer les champs appropriés
+            if (vehicleType === 'voiture') {
+                fiscalPowerGroup.style.display = 'block';
+                motoPowerGroup.style.display = 'none';
+                fiscalPowerSelect.required = true;
+                motoPowerSelect.required = false;
+            } else if (vehicleType === 'moto') {
+                fiscalPowerGroup.style.display = 'none';
+                motoPowerGroup.style.display = 'block';
+                fiscalPowerSelect.required = false;
+                motoPowerSelect.required = true;
+            } else if (vehicleType === 'cyclomoteur') {
+                fiscalPowerGroup.style.display = 'none';
+                motoPowerGroup.style.display = 'none';
+                fiscalPowerSelect.required = false;
+                motoPowerSelect.required = false;
+            } else {
+                fiscalPowerGroup.style.display = 'none';
+                motoPowerGroup.style.display = 'none';
+                fiscalPowerSelect.required = false;
+                motoPowerSelect.required = false;
+            }
+        });
+
+        // Fonction de calcul
+        function calculateIndemnity(vehicleType, power, distance) {
+            let bareme;
+            let amount = 0;
+            let baremeText = '';
+            let calculDetail = '';
+
+            if (vehicleType === 'voiture') {
+                bareme = BAREMES.voiture[power];
+                baremeText = `Voiture ${power} CV`;
+
+                if (distance <= 5000) {
+                    amount = bareme.upTo5000(distance);
+                    calculDetail = `${distance} km × coefficient = ${amount.toFixed(2)} €`;
+                } else if (distance <= 20000) {
+                    amount = bareme.from5001To20000(distance);
+                    calculDetail = `(5 000 premiers km) + (${distance - 5000} km supplémentaires) = ${amount.toFixed(2)} €`;
+                } else {
+                    amount = bareme.above20000(distance);
+                    calculDetail = `(5 000 premiers km) + (15 000 km suivants) + (${distance - 20000} km au-delà) = ${amount.toFixed(2)} €`;
+                }
+            } else if (vehicleType === 'moto') {
+                bareme = BAREMES.moto[power];
+                baremeText = `Moto ${power} CV`;
+
+                if (distance <= 3000) {
+                    amount = bareme.upTo3000(distance);
+                    calculDetail = `${distance} km × coefficient = ${amount.toFixed(2)} €`;
+                } else if (distance <= 6000) {
+                    amount = bareme.from3001To6000(distance);
+                    calculDetail = `(3 000 premiers km) + (${distance - 3000} km supplémentaires) = ${amount.toFixed(2)} €`;
+                } else {
+                    amount = bareme.above6000(distance);
+                    calculDetail = `(3 000 premiers km) + (3 000 km suivants) + (${distance - 6000} km au-delà) = ${amount.toFixed(2)} €`;
+                }
+            } else if (vehicleType === 'cyclomoteur') {
+                bareme = BAREMES.cyclomoteur.default;
+                baremeText = 'Cyclomoteur (50 cm³ ou moins)';
+
+                if (distance <= 3000) {
+                    amount = bareme.upTo3000(distance);
+                    calculDetail = `${distance} km × coefficient = ${amount.toFixed(2)} €`;
+                } else if (distance <= 6000) {
+                    amount = bareme.from3001To6000(distance);
+                    calculDetail = `(3 000 premiers km) + (${distance - 3000} km supplémentaires) = ${amount.toFixed(2)} €`;
+                } else {
+                    amount = bareme.above6000(distance);
+                    calculDetail = `(3 000 premiers km) + (3 000 km suivants) + (${distance - 6000} km au-delà) = ${amount.toFixed(2)} €`;
+                }
+            }
+
+            return {
+                amount: amount,
+                baremeText: baremeText,
+                calculDetail: calculDetail
+            };
+        }
+
+        // Gestion de la soumission du formulaire
+        calculatorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const vehicleType = vehicleTypeSelect.value;
+            const distance = parseInt(distanceInput.value);
+            let power;
+
+            if (vehicleType === 'voiture') {
+                power = fiscalPowerSelect.value;
+                if (!power) {
+                    alert('Veuillez sélectionner la puissance fiscale de votre voiture.');
+                    return;
+                }
+            } else if (vehicleType === 'moto') {
+                power = motoPowerSelect.value;
+                if (!power) {
+                    alert('Veuillez sélectionner la cylindrée de votre moto.');
+                    return;
+                }
+            } else if (vehicleType === 'cyclomoteur') {
+                power = 'default';
+            }
+
+            if (!distance || distance <= 0) {
+                alert('Veuillez saisir une distance valide.');
+                return;
+            }
+
+            const result = calculateIndemnity(vehicleType, power, distance);
+
+            // Afficher les résultats
+            document.getElementById('resultDistance').textContent = `${distance.toLocaleString('fr-FR')} km`;
+            document.getElementById('resultBareme').textContent = result.baremeText;
+            document.getElementById('resultAmount').textContent = `${result.amount.toFixed(2)} €`;
+            document.getElementById('calculDetail').textContent = result.calculDetail;
+
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+</body>
+</html>
